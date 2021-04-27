@@ -16,12 +16,12 @@ public class PizzaShopService {
     private PizzaHotService pizzaHotService;
 
     public PizzaShopService() {
-        // TODO - alterar criação de instância para chamar para o Proxy de Cache
-        damenosService = new DamenosServiceImpl();
-        pizzaHotService = new PizzaHotServiceImpl();
+        
+        damenosService = new DamenosServiceImplProxy();
+        pizzaHotService = new PizzaHotServiceImpProxy();
     }
 
-    // TODO - implementar decorator para não precisar atributos da pizza como parâmetros no método
+  
     public void orderPizza(Pizza pizza, boolean discountCoupon, boolean extraCheese, boolean panPizza, boolean stuffedCrust) {
 
         Float totalPrice = pizza.getPrice();
@@ -58,12 +58,30 @@ public class PizzaShopService {
     // TODO - implementar adapter para unificar pizzas vindas das APIs Damenos e PizzaHot num único método getPizzas()
     // TODO - public List<Pizza> getPizzas() {}
 
-    public List<DamenosPizza> getPizzasDamenos() {
-        return damenosService.getPizzas();
-    }
 
-    public List<PizzaHotPizza> getPizzasPizzaHot() {
-        return pizzaHotService.getPizzas();
-    }
+public List<Pizza> getPizzas() {
+		List<Pizza> pizzas = new ArrayList<>();
 
-}
+		List<DamenosPizza> Adaptordamenos = damenosService.getPizzas();
+		
+		List<PizzaHotPizza> hots  = pizzaHotService.getPizzas();
+
+		for (DamenosPizza Adaptordamenos: damenos) {
+			pizzas.add(new DamenosAdapter(dameno));
+		}
+		
+		for (PizzaHotPizza hot: hots) {
+			pizzas.add(new PizzahotAdapter(hot));
+		}
+		
+		return pizzas;
+
+	}
+
+	public List<DamenosPizza> getPizzasDamenos() {
+		return damenosService.getPizzas();
+	}
+
+	public List<PizzaHotPizza> getPizzasPizzaHot() {
+		return pizzaHotService.getPizzas();
+	}
